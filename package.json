@@ -1,0 +1,40 @@
+{
+  "name": "djax",
+  "version": "1.0.0",
+  "description": "A lightweight jQuery.ajax subset",
+  "main": "dajax.js",
+  "scripts": {
+    "pretest": "forever start -m 1 test/api-mockup.js",
+    "posttest": "forever stop test/api-mockup.js",
+    "test": "gulp test || :",
+    "build": "gulp build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jacomyal/djax"
+  },
+  "keywords": [
+    "jquery",
+    "ajax"
+  ],
+  "author": "Alexis Jacomy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jacomyal/djax/issues"
+  },
+  "homepage": "https://github.com/jacomyal/djax",
+  "devDependencies": {
+    "assert": "^1.1.2",
+    "body-parser": "^1.9.0",
+    "express": "^4.9.7",
+    "forever": "^0.11.1",
+    "gulp": "^3.8.8",
+    "gulp-browserify": "^0.5.0",
+    "gulp-header": "^1.1.1",
+    "gulp-jshint": "^1.8.5",
+    "gulp-mocha-phantomjs": "^0.5.1",
+    "gulp-rename": "^1.2.0",
+    "gulp-uglify": "^1.0.1",
+    "http": "0.0.0"
+  }
+}
