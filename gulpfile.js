@@ -7,7 +7,7 @@ var gulp = require('gulp'),
     mochaPhantomJS = require('gulp-mocha-phantomjs');
 
 // Files
-var indexFile = './dajax.js';
+var indexFile = './djax.js';
 
 // Linting
 gulp.task('lint', function() {
@@ -38,7 +38,7 @@ var banner = ['/**',
   return gulp.src(indexFile)
     .pipe(uglify())
     .pipe(header(banner, { pkg: pkg }))
-    .pipe(rename('dajax.min.js'))
+    .pipe(rename('djax.min.js'))
     .pipe(gulp.dest('./'));
 });
 

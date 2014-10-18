@@ -1,3 +1,3 @@
 module.exports = {
-  ajax: require('./dajax.test.js')
+  ajax: require('./djax.test.js')
 };

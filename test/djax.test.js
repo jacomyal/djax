@@ -1,5 +1,5 @@
 var assert = require('assert'),
-    ajax = require('../dajax.js');
+    ajax = require('../djax.js');
 
 describe('Polymorphism', function() {
   it('should work as ajax({ url, success, error })', function(done) {

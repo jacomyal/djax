@@ -2,7 +2,7 @@
   "name": "djax",
   "version": "1.0.0",
   "description": "A lightweight jQuery.ajax subset",
-  "main": "dajax.js",
+  "main": "djax.js",
   "scripts": {
     "pretest": "forever start -m 1 test/api-mockup.js",
     "posttest": "forever stop test/api-mockup.js",
