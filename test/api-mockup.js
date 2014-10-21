@@ -1,6 +1,5 @@
 var express = require('express'),
     bodyParser = require('body-parser'),
-    http = require('http'),
     app = express(),
     server;
 
@@ -190,4 +189,11 @@ app.delete('/data/:id', controller.deleteRow);
 
 app.get('/*', express.static(__dirname));
 
-server = http.createServer(app).listen('8001');
+
+
+
+/**
+ * EXPORTING:
+ * **********
+ */
+module.exports = app;

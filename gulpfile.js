@@ -4,7 +4,9 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
     header = require('gulp-header'),
     browserify = require('gulp-browserify'),
-    mochaPhantomJS = require('gulp-mocha-phantomjs');
+    mochaPhantomJS = require('gulp-mocha-phantomjs'),
+    api = require('./test/api-mockup.js'),
+    server;
 
 // Files
 var indexFile = './djax.js';
@@ -48,12 +50,23 @@ gulp.task('build-tests', function() {
     .pipe(gulp.dest('./test/build'));
 });
 
-gulp.task('test', ['build-tests'], function() {
+gulp.task('run-test', ['build-tests'], function() {
+
+  // Launching API server
+  server = api.listen(8001);
+
+  // Launching mocha tests through phantomjs
   var stream = mochaPhantomJS();
   stream.write({path: 'http://localhost:8001/browser/unit.html'});
   stream.end();
   return stream;
-})
+});
+
+gulp.task('test', ['run-test'], function() {
+
+  // Tests are over, we close the server
+  server.close();
+});
 
 // Macro tasks
 gulp.task('default', ['lint', 'build']);
