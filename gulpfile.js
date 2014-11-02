@@ -3,6 +3,7 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     rename = require('gulp-rename'),
     header = require('gulp-header'),
+    gjslint = require('gulp-gjslint'),
     browserify = require('gulp-browserify'),
     mochaPhantomJS = require('gulp-mocha-phantomjs'),
     api = require('./test/api-mockup.js'),
@@ -15,16 +16,22 @@ var indexFile = './djax.js';
 gulp.task('lint', function() {
   // Linting configurations
   var jshintConfig = {
-    '-W055': true,
-    '-W040': true,
-    '-W064': true,
-    node: true,
-    browser: true
-  };
+        '-W055': true,
+        '-W040': true,
+        '-W064': true,
+        node: true,
+        browser: true
+      },
+      gjslintConfig = {
+        flags: ['--nojsdoc', '--disable 211,212']
+      };
 
   return gulp.src(indexFile)
     .pipe(jshint(jshintConfig))
-    .pipe(jshint.reporter('default'));
+    .pipe(jshint.reporter('jshint-stylish'))
+    .pipe(jshint.reporter('fail'))
+    .pipe(gjslint(gjslintConfig))
+    .pipe(gjslint.reporter('console'), {fail: true});
 });
 
 gulp.task('build', function() {
@@ -51,7 +58,6 @@ gulp.task('build-tests', function() {
 });
 
 gulp.task('run-test', ['build-tests'], function() {
-
   // Launching API server
   server = api.listen(8001);
 
@@ -63,10 +69,9 @@ gulp.task('run-test', ['build-tests'], function() {
 });
 
 gulp.task('test', ['run-test'], function() {
-
   // Tests are over, we close the server
   server.close();
 });
 
 // Macro tasks
-gulp.task('default', ['lint', 'build']);
+gulp.task('default', ['lint', 'test',  'build']);
