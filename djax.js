@@ -225,6 +225,9 @@
     return xhr;
   }
 
+  // Djax version:
+  ajax.version = '1.0.0';
+
   // Check XMLHttpRequest presence:
   if (typeof XMLHttpRequest !== 'undefined')
     ajax.xhr = XMLHttpRequest;
