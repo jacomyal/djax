@@ -64,6 +64,11 @@ gulp.task('run-test', ['build-tests'], function() {
   // Launching mocha tests through phantomjs
   var stream = mochaPhantomJS();
   stream.write({path: 'http://localhost:8001/browser/unit.html'});
+  stream.on('error', function() {
+
+    // Tearing down server if an error occurred
+    server.close();
+  });
   stream.end();
   return stream;
 });
