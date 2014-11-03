@@ -166,72 +166,63 @@
     xhr.send(data);
 
     // Promise:
-    var promise = {
-      xhr: xhr,
-      done: function(callback) {
+    xhr.done = function(callback) {
+      if (typeof callback === 'function')
+        successes.push(callback);
+      else if (Array.isArray(callback))
+        successes = successes.concat(callback);
+      else
+        throw new Error('Wrong arguments.');
+
+      // If the call has already been received:
+      if (done) {
         if (typeof callback === 'function')
-          successes.push(callback);
+          conclude([callback]);
         else if (Array.isArray(callback))
-          successes = successes.concat(callback);
-        else
-          throw new Error('Wrong arguments.');
-
-        // If the call has already been received:
-        if (done) {
-          if (typeof callback === 'function')
-            conclude([callback]);
-          else if (Array.isArray(callback))
-            conclude(callback);
-        }
-
-        return this;
-      },
-      fail: function(callback) {
-        if (typeof callback === 'function')
-          errors.push(callback);
-        else if (Array.isArray(callback))
-          errors = errors.concat(callback);
-        else
-          throw new Error('Wrong arguments.');
-
-        // If the call has already been received:
-        if (done) {
-          if (typeof callback === 'function')
-            conclude(null, [callback]);
-          else if (Array.isArray(callback))
-            conclude(null, callback);
-        }
-
-        return this;
-      },
-      then: function(success, error) {
-        this.done(success);
-        this.fail(error);
-
-        // If the call has already been received:
-        if (done)
-          conclude(
-            Array.isArray(success) ?
-              success :
-              typeof success === 'function' ?
-                [success] : null,
-            Array.isArray(error) ?
-              error :
-              typeof error === 'function' ?
-                [error] : null
-          );
-
-        return this;
+          conclude(callback);
       }
+
+      return this;
+    };
+    xhr.fail = function(callback) {
+      if (typeof callback === 'function')
+        errors.push(callback);
+      else if (Array.isArray(callback))
+        errors = errors.concat(callback);
+      else
+        throw new Error('Wrong arguments.');
+
+      // If the call has already been received:
+      if (done) {
+        if (typeof callback === 'function')
+          conclude(null, [callback]);
+        else if (Array.isArray(callback))
+          conclude(null, callback);
+      }
+
+      return this;
+    };
+    xhr.then = function(success, error) {
+      this.done(success);
+      this.fail(error);
+
+      // If the call has already been received:
+      if (done)
+        conclude(
+          Array.isArray(success) ?
+            success :
+            typeof success === 'function' ?
+              [success] : null,
+          Array.isArray(error) ?
+            error :
+            typeof error === 'function' ?
+              [error] : null
+        );
+
+      return this;
     };
 
-    // Kill promise next frame:
-    setTimeout(function() {
-      for (var k in promise)
-        promise[k] = undefined;
-    }, 0);
-
-    return promise;
+    return xhr;
   }
 
   // Check XMLHttpRequest presence:
