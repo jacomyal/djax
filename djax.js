@@ -99,10 +99,9 @@
             }
           }
 
-
           conclude = function(successes, errors) {
             successes.forEach(function(fn) {
-              fn(data, 'ok', xhr);
+              fn(data, 'success', xhr);
             });
           };
           conclude(successes);
