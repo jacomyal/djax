@@ -76,11 +76,15 @@
 
     xhr.onreadystatechange = function() {
       if (+xhr.readyState === 4) {
+        done = true;
+
         if (timer)
           clearTimeout(timer);
 
         if (/^2/.test(xhr.status)) {
+          done = true;
           data = xhr.responseText;
+
           if (/json/.test(dataType)) {
             try {
               data = JSON.parse(xhr.responseText);
@@ -130,12 +134,25 @@
     if (
       typeof opt.beforeSend === 'function' &&
       opt.beforeSend(xhr, opt) === false
-    )
+    ) {
+      done = true;
+      conclude = function(successes, errors) {
+        errors.forEach(function(fn) {
+          fn(
+            xhr,
+            'abort',
+            xhr.responseText
+          );
+        });
+      };
+      conclude(null, errors);
       return xhr.abort();
+    }
 
     // Check "timeout":
     if (opt.timeout)
       timer = setTimeout(function() {
+        done = true;
         xhr.onreadystatechange = function() {};
         xhr.abort();
         conclude = function(successes, errors) {
