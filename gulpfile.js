@@ -35,14 +35,14 @@ gulp.task('lint', function() {
 });
 
 gulp.task('build', function() {
-var banner = ['/**',
-  ' * <%= pkg.name %> - <%= pkg.description %>',
-  ' * @version v<%= pkg.version %>',
-  ' * @link <%= pkg.homepage %>',
-  ' * @license <%= pkg.license %>',
-  ' */',
-  ''].join('\n'),
-  pkg = require('./package.json');
+  var banner = ['/**',
+    ' * <%= pkg.name %> - <%= pkg.description %>',
+    ' * @version v<%= pkg.version %>',
+    ' * @link <%= pkg.homepage %>',
+    ' * @license <%= pkg.license %>',
+    ' */',
+    ''].join('\n'),
+    pkg = require('./package.json');
 
   return gulp.src(indexFile)
     .pipe(uglify())
