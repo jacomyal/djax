@@ -1,5 +1,5 @@
 # Djax - a lightweight jQuery.ajax subset
-**version: 1.0.0**
+**version: 1.0.1**
 
 ## Description
 
