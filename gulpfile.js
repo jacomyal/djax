@@ -5,14 +5,19 @@ var gulp = require('gulp'),
     header = require('gulp-header'),
     gjslint = require('gulp-gjslint'),
     browserify = require('gulp-browserify'),
+    runSequence = require('gulp-run-sequence'),
     mochaPhantomJS = require('gulp-mocha-phantomjs'),
     api = require('./test/api-mockup.js'),
-    server;
+    serverJQuery,
+    serverDjax;
 
-// Files
-var indexFile = './djax.js';
 
-// Linting
+
+/**
+ * **************
+ * GENERIC TASKS:
+ * **************
+ */
 gulp.task('lint', function() {
   // Linting configurations
   var jshintConfig = {
@@ -26,7 +31,7 @@ gulp.task('lint', function() {
         flags: ['--nojsdoc', '--disable 211,212']
       };
 
-  return gulp.src(indexFile)
+  return gulp.src('./djax.js')
     .pipe(jshint(jshintConfig))
     .pipe(jshint.reporter('jshint-stylish'))
     .pipe(jshint.reporter('fail'))
@@ -44,39 +49,92 @@ gulp.task('build', function() {
     ''].join('\n'),
     pkg = require('./package.json');
 
-  return gulp.src(indexFile)
+  return gulp.src('./djax.js')
     .pipe(uglify())
     .pipe(header(banner, { pkg: pkg }))
     .pipe(rename('djax.min.js'))
     .pipe(gulp.dest('./'));
 });
 
-gulp.task('build-tests', function() {
-  return gulp.src('./test/unit.js')
+
+
+/**
+ * ****************
+ * DJAX TEST SUITE:
+ * ****************
+ */
+gulp.task('build-tests-djax', function() {
+  return gulp.src('./test/unit.djax.js')
     .pipe(browserify({ debug: true }))
     .pipe(gulp.dest('./test/build'));
 });
 
-gulp.task('run-test', ['build-tests'], function() {
+gulp.task('run-test-djax', ['build-tests-djax'], function() {
   // Launching API server
-  server = api.listen(8001);
+  serverDjax = api.listen(8001);
 
   // Launching mocha tests through phantomjs
   var stream = mochaPhantomJS();
-  stream.write({path: 'http://localhost:8001/browser/unit.html'});
+  stream.write({path: 'http://localhost:8001/browser/unit.djax.html'});
   stream.on('error', function() {
 
     // Tearing down server if an error occurred
-    server.close();
+    serverDjax.close();
   });
   stream.end();
   return stream;
 });
 
-gulp.task('test', ['run-test'], function() {
+gulp.task('test-djax', ['run-test-djax'], function() {
   // Tests are over, we close the server
-  server.close();
+  serverDjax.close();
+  return gulp;
 });
 
+
+
+/**
+ * ******************
+ * JQUERY TEST SUITE:
+ * ******************
+ */
+gulp.task('build-tests-jquery', function() {
+  return gulp.src('./test/unit.jquery.js')
+    .pipe(browserify({ debug: true }))
+    .pipe(gulp.dest('./test/build'));
+});
+
+gulp.task('run-test-jquery', ['build-tests-jquery'], function() {
+  // Launching API server
+  serverJQuery = api.listen(8002);
+
+  // Launching mocha tests through phantomjs
+  var stream = mochaPhantomJS();
+  stream.write({path: 'http://localhost:8002/browser/unit.jquery.html'});
+  stream.on('error', function() {
+
+    // Tearing down server if an error occurred
+    serverJQuery.close();
+  });
+  stream.end();
+  return stream;
+});
+
+gulp.task('test-jquery', ['run-test-jquery'], function() {
+  // Tests are over, we close the server
+  serverJQuery.close();
+  return gulp;
+});
+
+
+
+/**
+ * ***********
+ * META TASKS:
+ * ***********
+ */
 // Macro tasks
+gulp.task('test', function() {
+  runSequence('test-djax', 'test-jquery');
+});
 gulp.task('default', ['lint', 'test',  'build']);
