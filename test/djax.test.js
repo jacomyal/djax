@@ -18,12 +18,10 @@ describe('Polymorphism (' + ajaxName + ')', function() {
   });
 
   it('should work as ajax(url).then(success, error)', function(done) {
-    var res = ajax('/data/1')
-      .then(
+    var res = ajax('/data/1');
+    res.then(
         function(data, textStatus, xhr) {
-          // TODO:
-          // Find why with jQuery, here, xhr is actually an empty object...
-          // assert.deepEqual(data.result, { data: 'abcde', id: '1' });
+          assert.deepEqual(data.result, { data: 'abcde', id: '1' });
           assert.equal(textStatus, 'success');
           assert.equal(xhr, res);
           assert.equal(arguments.length, 3);
