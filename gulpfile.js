@@ -7,9 +7,10 @@ var gulp = require('gulp'),
     browserify = require('gulp-browserify'),
     runSequence = require('gulp-run-sequence'),
     mochaPhantomJS = require('gulp-mocha-phantomjs'),
-    api = require('./test/api-mockup.js'),
     serverJQuery,
-    serverDjax;
+    serverDjax,
+    apiJQuery,
+    apiDjax;
 
 
 
@@ -70,8 +71,11 @@ gulp.task('build-tests-djax', function() {
 });
 
 gulp.task('run-test-djax', ['build-tests-djax'], function() {
+  delete require.cache[require.resolve('./test/api-mockup.js')];
+  apiDjax = require('./test/api-mockup.js');
+
   // Launching API server
-  serverDjax = api.listen(8001);
+  serverDjax = apiDjax.listen(8001);
 
   // Launching mocha tests through phantomjs
   var stream = mochaPhantomJS();
@@ -105,8 +109,11 @@ gulp.task('build-tests-jquery', function() {
 });
 
 gulp.task('run-test-jquery', ['build-tests-jquery'], function() {
+  delete require.cache[require.resolve('./test/api-mockup.js')];
+  apiJQuery = require('./test/api-mockup.js');
+
   // Launching API server
-  serverJQuery = api.listen(8002);
+  serverJQuery = apiJQuery.listen(8002);
 
   // Launching mocha tests through phantomjs
   var stream = mochaPhantomJS();
