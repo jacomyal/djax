@@ -187,6 +187,13 @@ app.post('/data/:id', controller.postRow);
 app.put('/data/', controller.putRow);
 app.delete('/data/:id', controller.deleteRow);
 
+// Ad-hoc route:
+app.get('/adhoc/', function(req, res) {
+  return res.status(req.param('status') || 200)
+            .send(req.param('data'));
+});
+
+// Static files:
 app.get('/*', express.static(__dirname));
 
 

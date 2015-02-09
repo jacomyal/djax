@@ -42,6 +42,7 @@
         data,
         timer,
         conclude,
+        textStatus,
         done = false,
         url = opt.url,
         xhr = new ajax.xhr(),
@@ -83,15 +84,16 @@
 
         if (/^2/.test(xhr.status)) {
           done = true;
+          textStatus = 'success';
           data = xhr.responseText;
 
           if (/json/.test(dataType)) {
             try {
-              data = JSON.parse(xhr.responseText);
+              data = data ? JSON.parse(data) : '';
             } catch (e) {
               conclude = function(successes, errors) {
                 errors.forEach(function(fn) {
-                  fn(xhr, 'parsererror');
+                  fn(xhr, textStatus = 'parsererror');
                 });
               };
               conclude(null, errors);
@@ -99,9 +101,15 @@
             }
           }
 
+          // Specific 204 HTTP status case:
+          if (+xhr.status === 204) {
+            textStatus = 'nocontent';
+            data = undefined;
+          }
+
           conclude = function(successes, errors) {
             successes.forEach(function(fn) {
-              fn(data, 'success', xhr);
+              fn(data, textStatus, xhr);
             });
           };
           conclude(successes);

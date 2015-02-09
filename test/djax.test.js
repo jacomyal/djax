@@ -178,4 +178,37 @@ describe('HTTP verbs (' + ajaxName + ')', function() {
       }
     });
   });
+
+  it('should work with GET calls and empty data', function(done) {
+    var res = ajax({
+      url: '/adhoc/',
+      success: function(data, textStatus, xhr) {
+        assert.equal(data, '');
+        assert.equal(textStatus, 'success');
+        assert.equal(xhr, res);
+        assert.equal(arguments.length, 3);
+        done();
+      },
+      error: function(xhr, textStatus, errorThrown) {
+        throw new Error('Unexpected error.');
+      }
+    });
+  });
+
+  it('should work with GET calls and 204 HTTP status', function(done) {
+    var res = ajax({
+      url: '/adhoc/',
+      data: { status: 204 },
+      success: function(data, textStatus, xhr) {
+        assert.equal(data, undefined);
+        assert.equal(textStatus, 'nocontent');
+        assert.equal(xhr, res);
+        assert.equal(arguments.length, 3);
+        done();
+      },
+      error: function(xhr, textStatus, errorThrown) {
+        throw new Error('Unexpected error.');
+      }
+    });
+  });
 });
