@@ -98,7 +98,7 @@ var controller = {
     var result;
 
     try {
-      result = model.readData(req.param('id'));
+      result = model.readData(req.params.id);
     } catch (e) {
       return res.status(400).send('Bad request');
     }
@@ -111,8 +111,8 @@ var controller = {
   postRow: function(req, res) {
     var result,
         row = {
-          id: req.param('id'),
-          data: req.param('data')
+          id: req.params.id,
+          data: req.body.data
         };
 
     try {
@@ -128,7 +128,7 @@ var controller = {
   },
   putRow: function(req, res) {
     var result,
-        data = req.param('data');
+        data = req.body.data;
 
     try {
       result = model.createData(data);
@@ -140,7 +140,7 @@ var controller = {
   },
   deleteRow: function(req, res) {
     var result,
-        id = req.param('id');
+        id = req.params.id;
 
     try {
       result = model.deleteData(id);
@@ -189,8 +189,8 @@ app.delete('/data/:id', controller.deleteRow);
 
 // Ad-hoc route:
 app.get('/adhoc/', function(req, res) {
-  return res.status(req.param('status') || 200)
-            .send(req.param('data'));
+  return res.status(req.query.status || 200)
+            .send(req.body.data);
 });
 
 // Static files:
