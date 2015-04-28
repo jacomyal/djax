@@ -1,6 +1,28 @@
 var assert = require('assert');
 
 describe('Polymorphism (' + ajaxName + ')', function() {
+  it('should work without any callback.', function(done) {
+    var res = ajax({
+      url: '/data/1'
+    });
+
+    setTimeout(done, 200);
+  });
+
+  it('should work as ajax().then(success)', function(done) {
+    var res = ajax({
+      url: '/data/1',
+      error: function() {
+        throw new Error('Unexpected error.');
+      }
+    }).then(function(data, textStatus, xhr) {
+      assert.deepEqual(data.result, { data: 'abcde', id: '1' });
+      assert.equal(textStatus, 'success');
+      assert.equal(arguments.length, 3);
+      done();
+    });
+  });
+
   it('should work as ajax({ url, success, error })', function(done) {
     var res = ajax({
       url: '/data/1',

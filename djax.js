@@ -211,8 +211,10 @@
       return this;
     };
     xhr.then = function(success, error) {
-      this.done(success);
-      this.fail(error);
+      if (success)
+        this.done(success);
+      if (error)
+        this.fail(error);
 
       // If the call has already been received:
       if (done)
