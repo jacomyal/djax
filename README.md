@@ -18,6 +18,7 @@ Here are the supported options:
  - **headers**: An object of additional header key/value pairs to send along with requests using the XMLHttpRequest transport.
  - **beforeSend**: A pre-request callback function that can be used to modify the XHR object before it is sent.
  - **timeout**: Set a timeout (in milliseconds) for the request.
+ - **xhrFields**: an object whose properties will be assigned to the native XHR object, useful to enable `withCredentials` for instance.
 
 The ajax function returns an object with the following attributes, to deal with promises:
   - **xhr**: A reference to the XHR.
