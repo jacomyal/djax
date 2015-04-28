@@ -129,6 +129,11 @@
       }
     };
 
+    // Check xhrFields
+    if (opt.xhrFields && typeof opt.xhrFields === 'object')
+      for (key in opt.xhrFields)
+        xhr[key] = opt.xhrFields[key];
+
     xhr.open(type, url, true);
     xhr.setRequestHeader('Content-Type', contentType);
 
