@@ -1,6 +1,6 @@
 {
   "name": "djax",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "A lightweight jQuery.ajax subset",
   "main": "djax.js",
   "scripts": {
