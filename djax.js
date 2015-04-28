@@ -251,11 +251,11 @@
   if (typeof exports !== 'undefined') {
     if (typeof module !== 'undefined' && module.exports)
       exports = module.exports = ajax;
-    exports.ajax = ajax;
+    exports.djax = ajax;
   } else if (typeof define === 'function' && define.amd)
     define('djax', [], function() {
       return ajax;
     });
   else
-    this.ajax = ajax;
+    this.djax = ajax;
 }).call(this);
