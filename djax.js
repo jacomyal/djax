@@ -241,7 +241,7 @@
   }
 
   // Djax version:
-  ajax.version = '1.1.0';
+  ajax.version = '1.2.0';
 
   // Check XMLHttpRequest presence:
   if (typeof XMLHttpRequest !== 'undefined')
