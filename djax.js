@@ -46,7 +46,7 @@
         done = false,
         url = opt.url,
         xhr = new ajax.xhr(),
-        type = opt.type || 'GET',
+        type = opt.method || opt.type || 'GET',
         dataType = opt.dataType || 'json',
         contentType = opt.contentType || 'application/x-www-form-urlencoded';
 
