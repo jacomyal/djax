@@ -1,6 +1,17 @@
 var assert = require('assert');
 
 describe('Polymorphism (' + ajaxName + ')', function() {
+  before(function() {
+
+    // Monkey patching XHR object
+    var originalOpen = XMLHttpRequest.prototype.open;
+
+    XMLHttpRequest.prototype.open = function(_, url) {
+      this.__url = url;
+      return originalOpen.apply(this, arguments);
+    };
+  });
+
   it('should work without any callback.', function(done) {
     var res = ajax({
       url: '/data/1'
@@ -230,6 +241,20 @@ describe('HTTP verbs (' + ajaxName + ')', function() {
       },
       error: function(xhr, textStatus, errorThrown) {
         throw new Error('Unexpected error.');
+      }
+    });
+  });
+
+  it('should not append a ? to the url if the data is empty', function(done) {
+    var res = ajax({
+      url: '/data/1',
+      data: {},
+      success: function(data, textStatus, xhr) {
+
+        // NOTE: Did not find a good way to test this with jQuery
+        if (xhr.__url)
+          assert.strictEqual(xhr.__url, '/data/1');
+        done();
       }
     });
   });
