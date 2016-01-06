@@ -67,7 +67,7 @@
         data = data.join('&');
       }
 
-      if (/GET|DELETE/i.test(type)) {
+      if (/GET|DELETE/i.test(type) && data) {
         url += /\?/.test(url) ?
           '&' + data :
           '?' + data;
