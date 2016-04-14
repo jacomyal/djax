@@ -1,4 +1,4 @@
-import djax from '../djax.js';
+import djax, { ajaxSettings } from '../djax.js';
 import tests from './djax.test.js';
 
-tests(djax, 'djax');
+tests(djax, ajaxSettings, 'djax');

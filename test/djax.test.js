@@ -2,7 +2,7 @@ import assert from 'assert';
 
 const baseUrl = 'http://localhost:8001';
 
-export default (ajax, ajaxName) => {
+export default (ajax, ajaxSettings, ajaxName) => {
   describe(`Polymorphism (${ ajaxName })`, () => {
     it('should work without any callback.', done => {
       ajax({ url: baseUrl + '/data/1' });
@@ -296,6 +296,44 @@ export default (ajax, ajaxName) => {
           assert.equal(xhr, res);
           assert.equal(rest.length, 0);
           done();
+        },
+        error: () => {
+          throw new Error('Unexpected error.');
+        },
+      });
+    });
+  });
+
+  describe(`Custom XHR (${ ajaxName })`, () => {
+    it('should make xhr available', done => {
+      assert(ajaxSettings.xhr() instanceof XMLHttpRequest);
+      done();
+    });
+
+    it('should accept a custom xhr', done => {
+      let check = false;
+      const res = ajax({
+        url: '/adhoc/',
+        data: { data: 'something' },
+        xhr() {
+          const xhr = ajaxSettings.xhr();
+
+          xhr.addEventListener('load', () => {check = true;}, false);
+
+          return xhr;
+        },
+        success: (data, textStatus, xhr, ...rest) => {
+          // Timeout to for load to be called before success in djax.
+          // As it's a subset of jQuery.ajax, we don't aspire to respect
+          // the spec at this level of details
+          setTimeout(() => {
+            assert(check);
+            assert.deepEqual(data, 'something');
+            assert.equal(textStatus, 'success');
+            assert.equal(xhr, res);
+            assert.equal(rest.length, 0);
+            done();
+          }, 0);
         },
         error: () => {
           throw new Error('Unexpected error.');

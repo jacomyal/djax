@@ -1,4 +1,4 @@
-import { ajax } from 'jquery';
+import { ajax, ajaxSettings } from 'jquery';
 import tests from './djax.test.js';
 
-tests(ajax, 'jquery');
+tests(ajax, ajaxSettings, 'jquery');

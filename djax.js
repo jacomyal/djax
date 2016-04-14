@@ -1,8 +1,21 @@
 function ajax(opt, fn) {
-  if (!ajax.XHR) {
+  if (typeof opt === 'string') {
+    opt = { url: opt };
+  } else if (typeof opt !== 'object' || !opt) {
+    throw new Error('Wrong arguments');
+  }
+
+  // Get the xhr object:
+  let xhr;
+
+  if (typeof opt.xhr === 'function') {
+    xhr = opt.xhr();
+  } else if (ajax.XHR) {
+    xhr = new ajax.XHR();
+  } else {
     throw new Error(
       'XMLHttpRequest not found. You can specify which XMLHttpRequest ' +
-      'you want to use by using `ajax.xhr = myXHR`.'
+      'you want to use by using `ajax({ xhr() { return myXhr; } })`.'
     );
   }
 
@@ -11,15 +24,9 @@ function ajax(opt, fn) {
   let successes = [];
 
   // Check for given callbacks:
-  if (typeof opt === 'string') {
-    opt = { url: opt };
-
-    if (opt && fn) {
-      if (typeof fn === 'function') successes.push(fn);
-      else if (Array.isArray(fn)) successes = successes.concat(fn);
-    }
-  } else if (typeof opt !== 'object' || !opt) {
-    throw new Error('Wrong arguments');
+  if (opt && fn) {
+    if (typeof fn === 'function') successes.push(fn);
+    else if (Array.isArray(fn)) successes = successes.concat(fn);
   }
 
   if (typeof opt.success === 'function') {
@@ -42,7 +49,6 @@ function ajax(opt, fn) {
   let textStatus;
   let done = false;
   let url = opt.url;
-  const xhr = new ajax.XHR();
   const type = opt.method || opt.type || 'GET';
   const dataType = opt.dataType || 'json';
   const contentType = opt.contentType || (
@@ -257,3 +263,13 @@ if (typeof XMLHttpRequest !== 'undefined') {
 }
 
 export default ajax;
+
+export const ajaxSettings = {
+  xhr() {
+    if (XMLHttpRequest) {
+      return new XMLHttpRequest();
+    }
+
+    return false;
+  },
+};
