@@ -7,8 +7,21 @@ Object.defineProperty(exports, "__esModule", {
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 function ajax(opt, fn) {
-  if (!ajax.XHR) {
-    throw new Error('XMLHttpRequest not found. You can specify which XMLHttpRequest ' + 'you want to use by using `ajax.xhr = myXHR`.');
+  if (typeof opt === 'string') {
+    opt = { url: opt };
+  } else if ((typeof opt === 'undefined' ? 'undefined' : _typeof(opt)) !== 'object' || !opt) {
+    throw new Error('Wrong arguments');
+  }
+
+  // Get the xhr object:
+  var xhr = void 0;
+
+  if (typeof opt.xhr === 'function') {
+    xhr = opt.xhr();
+  } else if (ajax.XHR) {
+    xhr = new ajax.XHR();
+  } else {
+    throw new Error('XMLHttpRequest not found. You can specify which XMLHttpRequest ' + 'you want to use by using `ajax({ xhr() { return myXhr; } })`.');
   }
 
   // Callbacks:
@@ -16,14 +29,8 @@ function ajax(opt, fn) {
   var successes = [];
 
   // Check for given callbacks:
-  if (typeof opt === 'string') {
-    opt = { url: opt };
-
-    if (opt && fn) {
-      if (typeof fn === 'function') successes.push(fn);else if (Array.isArray(fn)) successes = successes.concat(fn);
-    }
-  } else if ((typeof opt === 'undefined' ? 'undefined' : _typeof(opt)) !== 'object' || !opt) {
-    throw new Error('Wrong arguments');
+  if (opt && fn) {
+    if (typeof fn === 'function') successes.push(fn);else if (Array.isArray(fn)) successes = successes.concat(fn);
   }
 
   if (typeof opt.success === 'function') {
@@ -46,17 +53,16 @@ function ajax(opt, fn) {
   var textStatus = void 0;
   var done = false;
   var url = opt.url;
-  var xhr = new ajax.XHR();
   var type = opt.method || opt.type || 'GET';
   var dataType = opt.dataType || 'json';
-  var contentType = opt.contentType || 'application/x-www-form-urlencoded';
+  var contentType = opt.contentType || (opt.contentType === false && opt.processData === false ? false : 'application/x-www-form-urlencoded');
 
   if (!url || typeof url !== 'string') {
     throw new Error('Wrong arguments');
   }
 
   if (opt.data) {
-    if (typeof opt.data === 'string') {
+    if (typeof opt.data === 'string' || !contentType) {
       data = opt.data;
     } else if (/json/.test(contentType)) {
       data = JSON.stringify(opt.data);
@@ -91,13 +97,7 @@ function ajax(opt, fn) {
           try {
             data = data ? JSON.parse(data) : '';
           } catch (e) {
-            conclude = function conclude(_, errs) {
-              return errs.forEach(function (fnc) {
-                return fnc(xhr, textStatus = 'parsererror');
-              });
-            };
-            conclude(null, errors);
-            return;
+            data = data + '';
           }
         }
 
@@ -134,7 +134,10 @@ function ajax(opt, fn) {
   }
 
   xhr.open(type, url, true);
-  xhr.setRequestHeader('Content-Type', contentType);
+
+  if (contentType) {
+    xhr.setRequestHeader('Content-Type', contentType);
+  }
 
   // Check custom headers:
   if (opt.headers) {
@@ -246,4 +249,12 @@ if (typeof XMLHttpRequest !== 'undefined') {
 }
 
 exports.default = ajax;
-module.exports = exports['default'];
+var ajaxSettings = exports.ajaxSettings = {
+  xhr: function xhr() {
+    if (XMLHttpRequest) {
+      return new XMLHttpRequest();
+    }
+
+    return false;
+  }
+};
