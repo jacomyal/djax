@@ -1,24 +1,28 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 function ajax(opt, fn) {
   if (!ajax.XHR) {
-    throw new Error(
-      'XMLHttpRequest not found. You can specify which XMLHttpRequest ' +
-      'you want to use by using `ajax.xhr = myXHR`.'
-    );
+    throw new Error('XMLHttpRequest not found. You can specify which XMLHttpRequest ' + 'you want to use by using `ajax.xhr = myXHR`.');
   }
 
   // Callbacks:
-  let errors = [];
-  let successes = [];
+  var errors = [];
+  var successes = [];
 
   // Check for given callbacks:
   if (typeof opt === 'string') {
     opt = { url: opt };
 
     if (opt && fn) {
-      if (typeof fn === 'function') successes.push(fn);
-      else if (Array.isArray(fn)) successes = successes.concat(fn);
+      if (typeof fn === 'function') successes.push(fn);else if (Array.isArray(fn)) successes = successes.concat(fn);
     }
-  } else if (typeof opt !== 'object' || !opt) {
+  } else if ((typeof opt === 'undefined' ? 'undefined' : _typeof(opt)) !== 'object' || !opt) {
     throw new Error('Wrong arguments');
   }
 
@@ -35,17 +39,17 @@ function ajax(opt, fn) {
   }
 
   // Other parameters:
-  let key;
-  let data;
-  let timer;
-  let conclude;
-  let textStatus;
-  let done = false;
-  let url = opt.url;
-  const xhr = new ajax.XHR();
-  const type = opt.method || opt.type || 'GET';
-  const dataType = opt.dataType || 'json';
-  const contentType = opt.contentType || 'application/x-www-form-urlencoded';
+  var key = void 0;
+  var data = void 0;
+  var timer = void 0;
+  var conclude = void 0;
+  var textStatus = void 0;
+  var done = false;
+  var url = opt.url;
+  var xhr = new ajax.XHR();
+  var type = opt.method || opt.type || 'GET';
+  var dataType = opt.dataType || 'json';
+  var contentType = opt.contentType || 'application/x-www-form-urlencoded';
 
   if (!url || typeof url !== 'string') {
     throw new Error('Wrong arguments');
@@ -60,23 +64,19 @@ function ajax(opt, fn) {
       data = [];
       for (key in opt.data) {
         if ({}.hasOwnProperty.call(opt.data, key)) {
-          data.push(
-            encodeURIComponent(key) + '=' + encodeURIComponent(opt.data[key])
-          );
+          data.push(encodeURIComponent(key) + '=' + encodeURIComponent(opt.data[key]));
         }
       }
       data = data.join('&');
     }
 
     if (/GET|DELETE/i.test(type)) {
-      url += /\?/.test(url) ?
-        '&' + data :
-        '?' + data;
+      url += /\?/.test(url) ? '&' + data : '?' + data;
       data = '';
     }
   }
 
-  xhr.onreadystatechange = () => {
+  xhr.onreadystatechange = function () {
     if (+xhr.readyState === 4) {
       done = true;
 
@@ -91,9 +91,11 @@ function ajax(opt, fn) {
           try {
             data = data ? JSON.parse(data) : '';
           } catch (e) {
-            conclude = (_, errs) => (
-              errs.forEach(fnc => fnc(xhr, textStatus = 'parsererror'))
-            );
+            conclude = function conclude(_, errs) {
+              return errs.forEach(function (fnc) {
+                return fnc(xhr, textStatus = 'parsererror');
+              });
+            };
             conclude(null, errors);
             return;
           }
@@ -105,25 +107,25 @@ function ajax(opt, fn) {
           data = undefined;
         }
 
-        conclude = succ => succ.forEach(fnc => fnc(data, textStatus, xhr));
+        conclude = function conclude(succ) {
+          return succ.forEach(function (fnc) {
+            return fnc(data, textStatus, xhr);
+          });
+        };
         conclude(successes);
       } else {
-        conclude = (_, errs) => (
-          errs.forEach(fnc => (
-            fnc(
-              xhr,
-              +xhr.status ? 'error' : 'abort',
-              xhr.responseText
-            )
-          ))
-        );
+        conclude = function conclude(_, errs) {
+          return errs.forEach(function (fnc) {
+            return fnc(xhr, +xhr.status ? 'error' : 'abort', xhr.responseText);
+          });
+        };
         conclude(null, errors);
       }
     }
   };
 
   // Check xhrFields
-  if (opt.xhrFields && typeof opt.xhrFields === 'object') {
+  if (opt.xhrFields && _typeof(opt.xhrFields) === 'object') {
     for (key in opt.xhrFields) {
       if ({}.hasOwnProperty.call(opt.xhrFields, key)) {
         xhr[key] = opt.xhrFields[key];
@@ -144,38 +146,30 @@ function ajax(opt, fn) {
   }
 
   // Check the "beforeSend" callback:
-  if (
-    typeof opt.beforeSend === 'function' &&
-    opt.beforeSend(xhr, opt) === false
-  ) {
+  if (typeof opt.beforeSend === 'function' && opt.beforeSend(xhr, opt) === false) {
     done = true;
-    conclude = (_, errs) => (
-      errs.forEach(fnc => (
-        fnc(
-          xhr,
-          'abort',
-          xhr.responseText
-        )
-      ))
-    );
+    conclude = function conclude(_, errs) {
+      return errs.forEach(function (fnc) {
+        return fnc(xhr, 'abort', xhr.responseText);
+      });
+    };
     conclude(null, errors);
     return xhr.abort();
   }
 
   // Check "timeout":
   if (opt.timeout) {
-    timer = setTimeout(
-      () => {
-        done = true;
-        xhr.onreadystatechange = () => {};
-        xhr.abort();
-        conclude = (_, errs) => (
-          errs.forEach(fnc => fnc(xhr, 'timeout'))
-        );
-        conclude(null, errors);
-      },
-      opt.timeout
-    );
+    timer = setTimeout(function () {
+      done = true;
+      xhr.onreadystatechange = function () {};
+      xhr.abort();
+      conclude = function conclude(_, errs) {
+        return errs.forEach(function (fnc) {
+          return fnc(xhr, 'timeout');
+        });
+      };
+      conclude(null, errors);
+    }, opt.timeout);
   }
 
   // Send the AJAX call:
@@ -229,12 +223,10 @@ function ajax(opt, fn) {
     // If the call has already been received:
     if (done) {
       if (!Array.isArray(success)) {
-        success = typeof success === 'function' ?
-          [success] : null;
+        success = typeof success === 'function' ? [success] : null;
       }
       if (!Array.isArray(error)) {
-        error = typeof error === 'function' ?
-          [error] : null;
+        error = typeof error === 'function' ? [error] : null;
       }
       conclude(success, error);
     }
@@ -253,4 +245,5 @@ if (typeof XMLHttpRequest !== 'undefined') {
   ajax.XHR = XMLHttpRequest;
 }
 
-export default ajax;
+exports.default = ajax;
+module.exports = exports['default'];

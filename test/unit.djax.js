@@ -1,6 +1,4 @@
-window.ajax = require('../djax');
-window.ajaxName = 'djax';
+import djax from '../djax.js';
+import tests from './djax.test.js';
 
-module.exports = {
-  ajax: require('./djax.test.js')
-};
+tests(djax, 'djax');

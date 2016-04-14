@@ -1,6 +1,4 @@
-window.ajax = require('jquery').ajax;
-window.ajaxName = 'jQuery';
+import { ajax } from 'jquery';
+import tests from './djax.test.js';
 
-module.exports = {
-  ajax: require('./djax.test.js')
-};
+tests(ajax, 'jquery');

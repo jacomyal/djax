@@ -2,10 +2,18 @@
   "name": "djax",
   "version": "1.2.0",
   "description": "A lightweight jQuery.ajax subset",
-  "main": "djax.js",
+  "main": "djax.dist.js",
   "scripts": {
-    "test": "gulp test",
-    "build": "gulp build"
+    "lint": "eslint djax.js test/*.js",
+    "build": "babel djax.js -o djax.dist.js --presets es2015 --plugins add-module-exports",
+    "test:server-start": "babel-node test/api-mockup.js --presets es2015 --plugins add-module-exports",
+    "test:server-stop": "pkill --signal SIGTERM testServer",
+    "test:build-djax": "browserify test/unit.djax.js -o test/build/unit.djax.js -t [ babelify --presets [ es2015 ] ]",
+    "test:exec-djax": "npm run test:server-start & sleep 2 && mocha-phantomjs -p node_modules/phantomjs-prebuilt/bin/phantomjs http://localhost:8001/front/browser/unit.djax.html; npm run test:server-stop",
+    "test:build-jquery": "browserify test/unit.jquery.js -o test/build/unit.jquery.js -t [ babelify --presets [ es2015 ] ]",
+    "test:exec-jquery": "npm run test:server-start & sleep 2 && mocha-phantomjs -p node_modules/phantomjs-prebuilt/bin/phantomjs http://localhost:8001/front/browser/unit.jquery.html; npm run test:server-stop",
+    "test": "npm run test:build-djax && npm run test:build-jquery && npm run test:exec-djax && npm run test:exec-jquery",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -22,19 +30,42 @@
   },
   "homepage": "https://github.com/jacomyal/djax",
   "devDependencies": {
-    "assert": "^1.1.2",
-    "body-parser": "^1.9.0",
-    "express": "^4.9.7",
-    "gulp": "^3.8.8",
-    "gulp-browserify": "^0.5.0",
-    "gulp-gjslint": "^0.1.4",
-    "gulp-header": "^1.1.1",
-    "gulp-jshint": "^1.8.5",
-    "gulp-mocha-phantomjs": "^0.5.1",
-    "gulp-rename": "^1.2.0",
-    "gulp-uglify": "^1.0.1",
-    "jquery": "^2.1.3",
-    "jshint-stylish": "^1.0.0",
-    "run-sequence": "^1.1.0"
+    "babel-cli": "^6.7.5",
+    "babel-eslint": "^6.0.2",
+    "babel-plugin-add-module-exports": "^0.1.2",
+    "babel-preset-es2015": "^6.6.0",
+    "babelify": "^7.2.0",
+    "body-parser": "^1.15.0",
+    "browserify": "^13.0.0",
+    "eslint": "^2.7.0",
+    "eslint-config-airbnb": "^6.2.0",
+    "eslint-plugin-react": "^4.3.0",
+    "express": "^4.13.4",
+    "jquery": "^2.2.3",
+    "mocha-phantomjs": "^4.0.2",
+    "phantomjs-prebuilt": "^2.1.7"
+  },
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "extends": "airbnb",
+    "env": {
+      "browser": true
+    },
+    "rules": {
+      "no-param-reassign": 0,
+      "prefer-template": 0,
+      "template-curly-spacing": [
+        2,
+        "always"
+      ]
+    },
+    "globals": {
+      "window": true,
+      "describe": true,
+      "assert": true,
+      "it": true,
+      "afterEach": true,
+      "beforeEach": true
+    }
   }
 }
