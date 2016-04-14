@@ -45,14 +45,18 @@ function ajax(opt, fn) {
   const xhr = new ajax.XHR();
   const type = opt.method || opt.type || 'GET';
   const dataType = opt.dataType || 'json';
-  const contentType = opt.contentType || 'application/x-www-form-urlencoded';
+  const contentType = opt.contentType || (
+    opt.contentType === false && opt.processData === false ?
+      false :
+      'application/x-www-form-urlencoded'
+  );
 
   if (!url || typeof url !== 'string') {
     throw new Error('Wrong arguments');
   }
 
   if (opt.data) {
-    if (typeof opt.data === 'string') {
+    if (typeof opt.data === 'string' || !contentType) {
       data = opt.data;
     } else if (/json/.test(contentType)) {
       data = JSON.stringify(opt.data);
@@ -132,7 +136,10 @@ function ajax(opt, fn) {
   }
 
   xhr.open(type, url, true);
-  xhr.setRequestHeader('Content-Type', contentType);
+
+  if (contentType) {
+    xhr.setRequestHeader('Content-Type', contentType);
+  }
 
   // Check custom headers:
   if (opt.headers) {

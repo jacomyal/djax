@@ -43,6 +43,7 @@
     "express": "^4.13.4",
     "jquery": "^2.2.3",
     "mocha-phantomjs": "^4.0.2",
+    "multer": "^1.1.0",
     "phantomjs-prebuilt": "^2.1.7"
   },
   "eslintConfig": {
@@ -65,7 +66,8 @@
       "assert": true,
       "it": true,
       "afterEach": true,
-      "beforeEach": true
+      "beforeEach": true,
+      "testfile": true
     }
   }
 }

@@ -1,3 +1,4 @@
+import multer from 'multer';
 import express from 'express';
 import bodyParser from 'body-parser';
 
@@ -153,6 +154,23 @@ const controller = {
       res.status(404).send('Data not found');
     }
   },
+  putFile: (req, res) => {
+    let result;
+    const upload = multer({ storage: multer.memoryStorage() }).single('file');
+
+    upload(req, res, () => {
+      try {
+        result = {
+          fileContent: req.file.buffer.toString(),
+          comment: req.body.comment,
+        };
+      } catch (e) {
+        res.status(400).send('lol');
+      }
+
+      res.send({ result });
+    });
+  },
 };
 
 
@@ -180,6 +198,7 @@ app.get('/data/:id', controller.getRow);
 app.post('/data/:id', controller.postRow);
 app.put('/data/', controller.putRow);
 app.delete('/data/:id', controller.deleteRow);
+app.put('/data/file', controller.putFile);
 
 // Ad-hoc route:
 app.get('/adhoc/', (req, res) => (

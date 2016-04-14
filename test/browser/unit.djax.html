@@ -13,6 +13,11 @@
     <script>mocha.setup('bdd')</script>
     <script src="../build/unit.djax.js"></script>
     <script>
+      const testfile = new Blob(
+        [JSON.stringify({ a: 2, b: 5 })],
+        { type: 'application/json' }
+      );
+
       if (window.mochaPhantomJS) {
         mochaPhantomJS.run();
       } else {

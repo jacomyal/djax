@@ -236,4 +236,71 @@ export default (ajax, ajaxName) => {
       });
     });
   });
+
+  describe(`Content types (${ ajaxName })`, () => {
+    it('should work with no content type', done => {
+      const res = ajax({
+        url: '/adhoc/',
+        data: { data: 'something' },
+        success: (data, textStatus, xhr, ...rest) => {
+          assert.deepEqual(data, 'something');
+          assert.equal(textStatus, 'success');
+          assert.equal(xhr, res);
+          assert.equal(rest.length, 0);
+          done();
+        },
+        error: () => {
+          throw new Error('Unexpected error.');
+        },
+      });
+    });
+
+    it('should work with a FormData containing a file', done => {
+      const form = new FormData();
+      form.append('file', testfile, 'testfile.json');
+
+      const res = ajax({
+        url: '/data/file',
+        type: 'PUT',
+        data: form,
+        processData: false,
+        contentType: false,
+        success: (data, textStatus, xhr, ...rest) => {
+          assert.deepEqual(JSON.parse(data.result.fileContent), { a: 2, b: 5 });
+          assert.equal(textStatus, 'success');
+          assert.equal(xhr, res);
+          assert.equal(rest.length, 0);
+          done();
+        },
+        error: () => {
+          throw new Error('Unexpected error.');
+        },
+      });
+    });
+
+    it('should work with params in a FormData', done => {
+      const form = new FormData();
+      form.append('file', testfile, 'testfile.json');
+      form.append('comment', 'this is a test');
+
+      const res = ajax({
+        url: '/data/file',
+        type: 'PUT',
+        data: form,
+        processData: false,
+        contentType: false,
+        success: (data, textStatus, xhr, ...rest) => {
+          assert.deepEqual(JSON.parse(data.result.fileContent), { a: 2, b: 5 });
+          assert.equal(data.result.comment, 'this is a test');
+          assert.equal(textStatus, 'success');
+          assert.equal(xhr, res);
+          assert.equal(rest.length, 0);
+          done();
+        },
+        error: () => {
+          throw new Error('Unexpected error.');
+        },
+      });
+    });
+  });
 };
