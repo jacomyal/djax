@@ -95,11 +95,7 @@ function ajax(opt, fn) {
           try {
             data = data ? JSON.parse(data) : '';
           } catch (e) {
-            conclude = (_, errs) => (
-              errs.forEach(fnc => fnc(xhr, textStatus = 'parsererror'))
-            );
-            conclude(null, errors);
-            return;
+            data = data + '';
           }
         }
 
