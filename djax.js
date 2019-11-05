@@ -234,7 +234,7 @@ function ajax(opt, fn) {
 }
 
 // Djax version:
-ajax.version = "1.2.0";
+ajax.version = "2.1.0";
 
 // Check XMLHttpRequest presence:
 if (typeof XMLHttpRequest !== "undefined") {
