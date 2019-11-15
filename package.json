@@ -6,10 +6,10 @@
   "scripts": {
     "test:server-start": "node test/api-mockup.js",
     "test:server-stop": "pkill --signal SIGTERM djaxTestServer",
-    "test:build-djax": "browserify test/unit.djax.js -o test/build/unit.djax.js -t [ babelify --presets [ @babel/preset-env ] ]",
-    "test:exec-djax": "npm run test:server-start & sleep 2 && mocha-phantomjs -p node_modules/phantomjs-prebuilt/bin/phantomjs http://localhost:8001/front/browser/unit.djax.html; npm run test:server-stop",
-    "test:build-jquery": "browserify test/unit.jquery.js -o test/build/unit.jquery.js -t [ babelify --presets [ @babel/preset-env ] ]",
-    "test:exec-jquery": "npm run test:server-start & sleep 2 && mocha-phantomjs -p node_modules/phantomjs-prebuilt/bin/phantomjs http://localhost:8001/front/browser/unit.jquery.html; npm run test:server-stop",
+    "test:build-djax": "parcel build -d test/build/djax test/test.djax.html --no-minify --public-url ./",
+    "test:exec-djax": "npm run test:server-start & sleep 2 && mocha-headless-chrome -f http://localhost:8001/front/build/djax/test.djax.html && npm run test:server-stop",
+    "test:build-jquery": "parcel build -d test/build/jquery test/test.jquery.html --no-minify --public-url ./",
+    "test:exec-jquery": "npm run test:server-start & sleep 2 && mocha-headless-chrome -f http://localhost:8001/front/build/jquery/test.jquery.html && npm run test:server-stop",
     "test": "npm run test:build-djax && npm run test:build-jquery && npm run test:exec-djax && npm run test:exec-jquery"
   },
   "repository": {
@@ -32,18 +32,14 @@
     }
   },
   "devDependencies": {
-    "@babel/core": "^7.6.4",
-    "@babel/preset-env": "^7.6.3",
-    "@babel/preset-es2015": "^7.0.0-beta.53",
-    "babelify": "^10.0.0",
     "body-parser": "^1.19.0",
-    "browserify": "^16.5.0",
     "express": "^4.17.1",
     "husky": "^3.0.9",
     "jquery": "^3.4.1",
-    "mocha-phantomjs": "^4.1.0",
+    "mocha": "^6.2.2",
+    "mocha-headless-chrome": "^2.0.3",
     "multer": "^1.4.2",
-    "phantomjs-prebuilt": "^2.1.16",
+    "parcel": "^1.12.4",
     "prettier": "^1.18.2",
     "pretty-quick": "^2.0.0"
   }
